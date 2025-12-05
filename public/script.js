@@ -429,7 +429,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (integralSpan) integralSpan.textContent = "Cargando...";
 
             // ENVÍO AL SERVIDOR BACKEND (Node.js)
-            fetch('https://riemanncalc.onrender.com/api/riemann', {
+            fetch('http://localhost:3000/api/riemann', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: jsonPayload 

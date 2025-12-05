@@ -3,7 +3,7 @@ const { exec } = require('child_process');
 const path = require('path');
 
 const app = express();
-const PORT = 3000; //puerto
+const PORT = 3000;
 
 // =======================================================
 // MIDDLEWARES GLOBALES

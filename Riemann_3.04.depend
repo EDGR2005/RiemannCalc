@@ -1,0 +1,204 @@
+# depslib dependency file v1.0
+1700832797 source:c:\users\pop90\onedrive\escritorio\riemann_3.04\cutintegral.cpp
+	<iostream>
+	<string>
+	<vector>
+	<unordered_map>
+	<utility>
+	<iomanip>
+	"node.h"
+	"ExpressionParser.h"
+	"toPostFix.h"
+	"Utils.h"
+	"cutIntegral.h"
+
+1700832797 c:\users\pop90\onedrive\escritorio\riemann_3.04\node.h
+	<memory>
+
+1700832797 c:\users\pop90\onedrive\escritorio\riemann_3.04\expressionparser.h
+	<vector>
+	<string>
+	<iomanip>
+	"node.h"
+
+1700832797 c:\users\pop90\onedrive\escritorio\riemann_3.04\topostfix.h
+	<vector>
+	<string>
+	<iostream>
+
+1700832798 c:\users\pop90\onedrive\escritorio\riemann_3.04\utils.h
+	<string>
+	<vector>
+	<iostream>
+
+1700832797 c:\users\pop90\onedrive\escritorio\riemann_3.04\cutintegral.h
+
+1700832797 source:c:\users\pop90\onedrive\escritorio\riemann_3.04\expressionparser.cpp
+	"ExpressionParser.h"
+	<iostream>
+	<stdexcept>
+	<math.h>
+
+1701038621 source:c:\users\pop90\onedrive\escritorio\riemann_3.04\main.cpp
+	<iostream>
+	<string>
+	<vector>
+	<unordered_map>
+	<utility>
+	<iomanip>
+	"node.h"
+	"ExpressionParser.h"
+	"toPostFix.h"
+	"Utils.h"
+	"cutIntegral.h"
+
+1700832797 source:c:\users\pop90\onedrive\escritorio\riemann_3.04\topostfix.cpp
+	"toPostFix.h"
+	"Utils.h"
+
+1700832797 source:c:\users\pop90\onedrive\escritorio\riemann_3.04\utils.cpp
+	"Utils.h"
+	"sustx.h"
+	"cutIntegral.h"
+	<string>
+
+1700832797 c:\users\pop90\onedrive\escritorio\riemann_3.04\sustx.h
+	<iostream>
+	<string>
+
+1710646142 source:c:\users\pop90\onedrive - benemérita universidad autónoma de puebla\universidad\pimer semestre\métodología de la progamación\riemann_3.04\cutintegral.cpp
+	<iostream>
+	<string>
+	<vector>
+	<unordered_map>
+	<utility>
+	<iomanip>
+	"node.h"
+	"ExpressionParser.h"
+	"toPostFix.h"
+	"Utils.h"
+	"cutIntegral.h"
+
+1700832797 c:\users\pop90\onedrive - benemérita universidad autónoma de puebla\universidad\pimer semestre\métodología de la progamación\riemann_3.04\node.h
+	<memory>
+
+1700832797 c:\users\pop90\onedrive - benemérita universidad autónoma de puebla\universidad\pimer semestre\métodología de la progamación\riemann_3.04\expressionparser.h
+	<vector>
+	<string>
+	<iomanip>
+	"node.h"
+
+1700832797 c:\users\pop90\onedrive - benemérita universidad autónoma de puebla\universidad\pimer semestre\métodología de la progamación\riemann_3.04\topostfix.h
+	<vector>
+	<string>
+	<iostream>
+
+1700832798 c:\users\pop90\onedrive - benemérita universidad autónoma de puebla\universidad\pimer semestre\métodología de la progamación\riemann_3.04\utils.h
+	<string>
+	<vector>
+	<iostream>
+
+1700832797 c:\users\pop90\onedrive - benemérita universidad autónoma de puebla\universidad\pimer semestre\métodología de la progamación\riemann_3.04\cutintegral.h
+
+1700832797 source:c:\users\pop90\onedrive - benemérita universidad autónoma de puebla\universidad\pimer semestre\métodología de la progamación\riemann_3.04\expressionparser.cpp
+	"ExpressionParser.h"
+	<iostream>
+	<stdexcept>
+	<math.h>
+
+1710431959 source:c:\users\pop90\onedrive - benemérita universidad autónoma de puebla\universidad\pimer semestre\métodología de la progamación\riemann_3.04\main.cpp
+	<iostream>
+	<string>
+	<vector>
+	<unordered_map>
+	<utility>
+	<iomanip>
+	"node.h"
+	"ExpressionParser.h"
+	"toPostFix.h"
+	"Utils.h"
+	"cutIntegral.h"
+
+1700832797 source:c:\users\pop90\onedrive - benemérita universidad autónoma de puebla\universidad\pimer semestre\métodología de la progamación\riemann_3.04\topostfix.cpp
+	"toPostFix.h"
+	"Utils.h"
+
+1700832797 source:c:\users\pop90\onedrive - benemérita universidad autónoma de puebla\universidad\pimer semestre\métodología de la progamación\riemann_3.04\utils.cpp
+	"Utils.h"
+	"sustx.h"
+	"cutIntegral.h"
+	<string>
+
+1700832797 c:\users\pop90\onedrive - benemérita universidad autónoma de puebla\universidad\pimer semestre\métodología de la progamación\riemann_3.04\sustx.h
+	<iostream>
+	<string>
+
+1747697604 source:c:\users\admin\desktop\proyectoestructurasdatos\riemann_3.04\riemann_3.04\cutintegral.cpp
+	<iostream>
+	<string>
+	<vector>
+	<unordered_map>
+	<utility>
+	<iomanip>
+	"node.h"
+	"ExpressionParser.h"
+	"toPostFix.h"
+	"Utils.h"
+	"cutIntegral.h"
+
+1747378112 c:\users\admin\desktop\proyectoestructurasdatos\riemann_3.04\riemann_3.04\node.h
+	<memory>
+
+1747378112 c:\users\admin\desktop\proyectoestructurasdatos\riemann_3.04\riemann_3.04\expressionparser.h
+	<vector>
+	<string>
+	<iomanip>
+	"node.h"
+
+1747623447 c:\users\admin\desktop\proyectoestructurasdatos\riemann_3.04\riemann_3.04\topostfix.h
+	<vector>
+	<string>
+	<iostream>
+
+1747378113 c:\users\admin\desktop\proyectoestructurasdatos\riemann_3.04\riemann_3.04\utils.h
+	<string>
+	<vector>
+	<iostream>
+
+1747378112 c:\users\admin\desktop\proyectoestructurasdatos\riemann_3.04\riemann_3.04\cutintegral.h
+
+1747378112 source:c:\users\admin\desktop\proyectoestructurasdatos\riemann_3.04\riemann_3.04\expressionparser.cpp
+	"ExpressionParser.h"
+	<iostream>
+	<stdexcept>
+	<math.h>
+
+1747554128 source:c:\users\admin\desktop\proyectoestructurasdatos\riemann_3.04\riemann_3.04\main.cpp
+	<iostream>
+	<string>
+	<vector>
+	<unordered_map>
+	<utility>
+	<iomanip>
+	"node.h"
+	"ExpressionParser.h"
+	"toPostFix.h"
+	"Utils.h"
+	"cutIntegral.h"
+	<fstream>
+	<string>
+
+1747378113 source:c:\users\admin\desktop\proyectoestructurasdatos\riemann_3.04\riemann_3.04\topostfix.cpp
+	"toPostFix.h"
+	"Utils.h"
+
+1747378113 source:c:\users\admin\desktop\proyectoestructurasdatos\riemann_3.04\riemann_3.04\utils.cpp
+	"Utils.h"
+	"sustx.h"
+	"cutIntegral.h"
+	<string>
+
+1747378113 c:\users\admin\desktop\proyectoestructurasdatos\riemann_3.04\riemann_3.04\sustx.h
+	<iostream>
+	<string>
+

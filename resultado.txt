@@ -1,0 +1,5 @@
+Limite inferior: 0.000000
+Limite superior: 12.000000
+Delta X: 0.010801
+Funcion: integral(x^2,0,12,1111)
+El valor de la sumatoria es: 576.765078

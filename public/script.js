@@ -13,9 +13,9 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore(); // Inicializa la base de datos
+const db = firebase.firestore(); 
 
-// Variable global para mantener la instancia del gráfico y destruirla si es necesario
+// Variable global para mantener la instancia del gráfico
 let riemannChartInstance = null;
 
 // =======================================================
@@ -39,6 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const registerLink = document.getElementById("register-link");
     const loginLink = document.getElementById("login-link");
     const logoutBtn = document.getElementById("logout-btn");
+    const guestLoginBtn = document.getElementById("guest-login-btn"); 
 
     // CÁLCULO
     const calcForm = document.getElementById("calc-form");
@@ -55,14 +56,45 @@ document.addEventListener("DOMContentLoaded", function () {
     // Historial
     const historyList = document.getElementById("history-list");
     const clearHistoryBtn = document.getElementById("clear-history-btn");
-
+    const historyCard = document.getElementById("historyCard"); 
+    
+    // Exportación
     const exportImageBtn = document.getElementById("exportImageBtn"); 
     const exportPdfBtn = document.getElementById("exportPdfBtn");
+
+    // Display
+    const signupName = document.getElementById("signup-name");
+    const userNameLabel = document.getElementById("user-name-label"); 
 
 
     // =======================================================
     // 3. FUNCIONES AUXILIARES
     // =======================================================
+
+    /**
+     * Carga el nombre del usuario de Firestore y actualiza el label.
+     * @param {string} userId - El UID del usuario autenticado.
+     */
+    function updateUserNameLabel(userId) {
+        if (!userId || !userNameLabel) {
+            userNameLabel.textContent = "";
+            return;
+        }
+
+        db.collection("users").doc(userId).get()
+            .then(doc => {
+                if (doc.exists && doc.data().name) {
+                    // Muestra el nombre, o un saludo general si no hay nombre
+                    userNameLabel.textContent = `Hola, ${doc.data().name} 👋`;
+                } else {
+                    userNameLabel.textContent = "Bienvenido";
+                }
+            })
+            .catch(error => {
+                console.error("Error al cargar el nombre:", error);
+                userNameLabel.textContent = "Usuario"; 
+            });
+    }
 
     function showLogin() {
         loginContainer.classList.remove("hidden");
@@ -95,12 +127,6 @@ document.addEventListener("DOMContentLoaded", function () {
             calcForm.reset();
         }
         
-        // Restablecer valores por defecto del HTML
-        document.getElementById("function").value = "sin(x)";
-        document.getElementById("a-limit").value = 0;
-        document.getElementById("b-limit").value = 3.14;
-        document.getElementById("partitions").value = 20;
-
         // Limpiar los resultados
         if (resultSpan) resultSpan.textContent = "—";
         if (integralSpan) integralSpan.textContent = "—";
@@ -120,20 +146,13 @@ document.addEventListener("DOMContentLoaded", function () {
             riemannChartInstance.destroy();
         }
 
-        const lineData = [];
-        const barData = [];
+        const lineData = puntos.map(p => ({ x: p.x, y: p.fx }));
+        const barData = puntos.map(p => ({ x: p.x, y: p.fx }));
 
-        puntos.forEach(p => {
-            lineData.push({ x: p.x, y: p.fx });
-            barData.push({ x: p.x, y: p.fx }); 
-        });
-
-        // Configuración del Gráfico
         riemannChartInstance = new Chart(ctx, {
             type: 'scatter', 
             data: {
                 datasets: [
-                    // 1. LÍNEA de la función
                     {
                         label: functionInput.value,
                         data: lineData,
@@ -145,7 +164,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         pointRadius: 0,
                         tension: 0.4
                     },
-                    // 2. RECTÁNGULOS
                     {
                         label: 'Suma de Riemann (Rectángulos)',
                         data: barData,
@@ -163,42 +181,25 @@ document.addEventListener("DOMContentLoaded", function () {
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    // ... (configuración de ejes X/Y) ...
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: { display: true, text: 'Eje X' },
+                        suggestedMin: parseFloat(aLimitInput.value), 
+                        suggestedMax: parseFloat(bLimitInput.value)
+                    },
+                    y: {
+                        beginAtZero: false,
+                        title: { display: true, text: 'Eje Y (f(x))' }
+                    }
                 },
                 plugins: {
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                    },
-                    legend: {
-                        display: true
-                    },
+                    tooltip: { mode: 'index', intersect: false },
+                    legend: { display: true },
                     zoom: {
-                        zoom: {
-                            wheel: {
-                                enabled: true, // Zoom con rueda del ratón
-                            },
-                            pinch: {
-                                enabled: true // Zoom con pellizco
-                            },
-                            // 🎯 ESTO DEBE SER 'xy'
-                            mode: 'xy', 
-                        },
-                        pan: {
-                            enabled: true, // Desplazamiento
-                            // 🎯 ESTO TAMBIÉN DEBE SER 'xy'
-                            mode: 'xy', 
-                        },
-                        // 🎯 LIMITES PARA AMBOS EJES
-                        limits: {
-                            x: { min: 'original', max: 'original' },
-                            y: { min: 'original', max: 'original' }
-                        },
-                        // Opcional: Esto habilita la función de doble clic/toque para restablecer la vista.
-                        // chartjs-plugin-zoom v2 lo tiene habilitado por defecto, pero es bueno ser explícito.
-                        // reset: {
-                        //    mode: 'auto' 
-                        // }
+                        zoom: { wheel: { enabled: true }, pinch: { enabled: true }, mode: 'xy' },
+                        pan: { enabled: true, mode: 'xy' },
+                        limits: { x: { min: 'original', max: 'original' }, y: { min: 'original', max: 'original' } }
                     }
                 }
             }
@@ -213,7 +214,7 @@ document.addEventListener("DOMContentLoaded", function () {
     * @param {string} userId - El UID del usuario autenticado.
     */
     function loadAndRenderHistory(userId) {
-        if (!historyList) return;
+        if (!userId || !historyList) return; // Salir si no hay ID o elemento de lista
 
         historyList.innerHTML = '<li class="muted small">Cargando historial...</li>';
         
@@ -239,6 +240,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <div class="history-data">
                             <strong class="history-func">f(x): ${data.function}</strong> | [${data.a}, ${data.b}] n=${data.n}
                             <div class="small">Resultado: ${data.result.toFixed(6)}</div>
+                            ${data.nombreRegistrador ? `<div class="muted small">Por: ${data.nombreRegistrador}</div>` : ''}
                         </div>
                         <div class="actions">
                             <button class="load-btn primary small" data-id="${doc.id}">Cargar</button>
@@ -260,7 +262,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     /** Adjunta eventos a los botones de Cargar y Eliminar. */
     function attachHistoryEventListeners(calculations) {
-        const userId = firebase.auth().currentUser.uid;
+        const user = firebase.auth().currentUser;
+        if (!user) return; 
+
+        const userId = user.uid;
         
         // Evento de Cargar
         document.querySelectorAll('.load-btn').forEach(btn => {
@@ -295,28 +300,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     console.error("Error al eliminar:", error);
                     Swal.fire({ icon: "error", title: "Error", text: "No se pudo eliminar el cálculo." });
                 });
-            });
-        });
-        
-        // Evento de Limpiar Todo
-        clearHistoryBtn.addEventListener('click', () => {
-            if (!confirm("¿Estás seguro de que quieres borrar todo el historial de cálculos?")) return;
-            
-            db.collection("users").doc(userId).collection("calculations").get()
-            .then(snapshot => {
-                const batch = db.batch();
-                snapshot.docs.forEach(doc => {
-                    batch.delete(doc.ref);
-                });
-                return batch.commit();
-            })
-            .then(() => {
-                Swal.fire({ icon: "success", title: "Historial Limpio", text: "Todo el historial ha sido borrado." });
-                loadAndRenderHistory(userId);
-            })
-            .catch(error => {
-                console.error("Error al limpiar historial:", error);
-                Swal.fire({ icon: "error", title: "Error", text: "Fallo al borrar el historial." });
             });
         });
     }
@@ -356,6 +339,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
         firebase.auth()
             .createUserWithEmailAndPassword(signupEmail.value, signupPassword.value)
+            .then(response => {
+                const user = response.user;
+                const name = signupName.value.trim();
+                
+                return db.collection("users").doc(user.uid).set({
+                    name: name,
+                    email: user.email,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            })
             .then(() => showApp())
             .catch(err => {
                             Swal.fire({
@@ -373,20 +366,47 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 
+    // EVENTO PARA INVITADO
+    if (guestLoginBtn) {
+        guestLoginBtn.addEventListener("click", () => {
+            // 1. Muestra la aplicación principal
+            showApp(); 
+            
+            // 2. Limpia el formulario por si acaso
+            resetCalculationForm();
+
+            // 3. Oculta las funcionalidades de usuario (historial, nombre)
+            if (userNameLabel) userNameLabel.textContent = "Modo Invitado";
+            if (historyCard) historyCard.classList.add('hidden');
+            if (clearHistoryBtn) clearHistoryBtn.style.display = 'none';
+
+            // 4. Muestra un mensaje de bienvenida
+            Swal.fire({
+                icon: "info",
+                title: "Modo Invitado",
+                text: "Puedes calcular, pero los resultados no se guardarán en el historial.",
+                showConfirmButton: false,
+                timer: 3000
+            });
+        });
+    }
+
+
     // =======================================================
-    // 5. EVENTO DE CÁLCULO DE RIEMANN
+    // 5. EVENTO DE CÁLCULO DE RIEMANN (CORREGIDO PARA INVITADO)
     // =======================================================
 
     if (calcForm) {
         calcForm.addEventListener("submit", function (event) {
             event.preventDefault();
 
-            if (!firebase.auth().currentUser) {
-                Swal.fire({ icon: "warning", title: "Sesión expirada", text: "Por favor, vuelve a iniciar sesión." });
-                showLogin();
-                return;
-            }
+            const user = firebase.auth().currentUser;
 
+            if (!user) {
+                // PERMITIR CÁLCULO EN MODO INVITADO PERO NO GUARDAR
+                console.warn("Cálculo realizado en modo invitado. No se guardará el historial.");
+            }
+            
             // 1. Obtención y Validación de Datos
             const funcStr = functionInput.value.trim();
             const a = parseFloat(aLimitInput.value);
@@ -424,7 +444,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 // MANEJO DE LA RESPUESTA EXITOSA
                 if (data.status === 'success' && data.resultado !== undefined) {
                     const resultado = parseFloat(data.resultado);
-                    const user = firebase.auth().currentUser;
 
                     try {
                         // 4a. Actualización de la interfaz
@@ -434,30 +453,27 @@ document.addEventListener("DOMContentLoaded", function () {
                         // 4b. DIBUJAR GRÁFICA INTERACTIVA
                         if (data.puntos && data.puntos.length > 0) {
                             drawRiemannChart(data.puntos); 
-                            
-
-
-
                         } else {
                             console.warn("Node.js no devolvió puntos para graficar.");
                         }
 
-                        // 4c. Guardar en Firestore
-                        if (user) {
-                            db.collection("users").doc(user.uid)
-                            .collection("calculations").add({
-                                function: funcStr,              
-                                a: a,
-                                b: b,
-                                n: n,
-                                result: resultado,
-                                timestamp: firebase.firestore.FieldValue.serverTimestamp() 
+                        // 4c. Guardar en Firestore (SOLO SI HAY USUARIO)
+                        if (user) { 
+                            // Accedemos a user.uid SÓLO si user existe.
+                            db.collection("users").doc(user.uid).get()
+                            .then(userDoc => {
+                                const nameToSave = userDoc.exists && userDoc.data().name ? userDoc.data().name : "Anónimo";
+
+                                db.collection("users").doc(user.uid)
+                                .collection("calculations").add({
+                                    function: funcStr, a: a, b: b, n: n, result: resultado,
+                                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                    nombreRegistrador: nameToSave
+                                })
+                                .then(() => loadAndRenderHistory(user.uid))
+                                .catch(error => console.error("Error al guardar:", error));
                             })
-                            .then(() => {
-                                console.log("Cálculo guardado en Firestore.");
-                                loadAndRenderHistory(user.uid); 
-                            })
-                            .catch(error => console.error("Error al guardar:", error));
+                            .catch(error => console.error("Error al obtener nombre:", error)); 
                         }
                     } catch (updateError) {
                         console.error("Error al actualizar la interfaz o guardar:", updateError);
@@ -466,10 +482,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Manejo de error lógico (si data.status != 'success')
                     Swal.fire({ icon: "error", title: "Fallo del Motor", text: data.message || 'El resultado no es válido.' });
                 }
-
-                // 5. Mantenimiento de Vista (Post-Cálculo)
-                if (firebase.auth().currentUser) showApp();
-                else showLogin();
             })
             .catch(error => {
                 // Manejo de errores de red o errores lanzados desde Node.js/C++
@@ -482,9 +494,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     title: "Error de Conexión", 
                     text: `No se pudo obtener el resultado. ${error.message}` 
                 });
-
-                // Mantenimiento de Vista (Post-Error)
-                if (firebase.auth().currentUser) showApp();
             });
         });
     }
@@ -504,8 +513,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             // 2. Obtener la URL de la imagen (PNG por defecto)
-            // Usamos chartCanvas.toDataURL() que es un método nativo del canvas.
-            const imageURL = chartCanvas.toDataURL('image/png', 1.0); // 1.0 es la calidad
+            const imageURL = chartCanvas.toDataURL('image/png', 1.0); 
 
             // 3. Crear un enlace temporal para forzar la descarga
             const link = document.createElement('a');
@@ -520,19 +528,176 @@ document.addEventListener("DOMContentLoaded", function () {
             Swal.fire({ icon: "success", title: "Descarga iniciada", text: "La imagen ha sido exportada como PNG." });
         });
     }
-    
+
     // =======================================================
-    // 7. INICIALIZACIÓN
+    // 7. EVENTO DE EXPORTACIÓN DE REPORTE COMPLETO (PDF ESTRUCTURADO)
+    // =======================================================
+
+    if (exportPdfBtn) {
+        exportPdfBtn.addEventListener('click', function() {
+            const chartCanvas = document.getElementById('riemannChart');
+            
+            if (!riemannChartInstance) {
+                Swal.fire({ icon: "warning", title: "Gráfico vacío", text: "Primero realiza un cálculo para dibujar el gráfico." });
+                return;
+            }
+
+            Swal.fire({
+                title: 'Generando Reporte PDF...',
+                text: 'Construyendo el documento.',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading() }
+            });
+            
+            // 1. OBTENER LOS DATOS DEL DOM
+            const funcStr = functionInput.value.trim();
+            const a = aLimitInput.value;
+            const b = bLimitInput.value;
+            const n = partitionsInput.value;
+            const deltaX = deltaXSpan.textContent;
+            const resultadoRiemann = resultSpan.textContent;
+            const resultadoIntegral = integralSpan.textContent;
+            const nombreUsuario = userNameLabel.textContent;
+            const fecha = new Date().toLocaleDateString('es-ES');
+            
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4'); // Retrato, mm, A4
+            const margin = 15;
+            let y = margin; // Posición Y actual
+
+            // ----------------------------------------------------
+            // 2. CONSTRUIR CABECERA Y DATOS GENERALES
+            // ----------------------------------------------------
+            
+            pdf.setFontSize(16);
+            pdf.text("Reporte de Sumatoria de Riemann", margin, y);
+            y += 8;
+
+            pdf.setFontSize(10);
+            pdf.text(`Generado por: ${nombreUsuario}`, margin, y);
+            y += 5;
+            pdf.text(`Fecha: ${fecha}`, margin, y);
+            y += 10;
+            
+            // ----------------------------------------------------
+            // 3. PARÁMETROS DEL CÁLCULO
+            // ----------------------------------------------------
+            
+            pdf.setFontSize(12);
+            pdf.text("— Parámetros de la Operación —", margin, y);
+            y += 8;
+
+            pdf.setFontSize(10);
+            pdf.text(`Función f(x): ${funcStr}`, margin, y); y += 5;
+            pdf.text(`Intervalo [a, b]: [${a}, ${b}]`, margin, y); y += 5;
+            pdf.text(`Número de Rectángulos (n): ${n}`, margin, y); y += 5;
+            pdf.text(`Δx (Ancho de rectángulo): ${deltaX}`, margin, y); y += 10;
+            
+            // ----------------------------------------------------
+            // 4. RESULTADOS
+            // ----------------------------------------------------
+            
+            pdf.setFontSize(12);
+            pdf.text("— Resultados —", margin, y);
+            y += 8;
+
+            pdf.setFontSize(10);
+            pdf.text(`Resultado de Suma de Riemann: ${resultadoRiemann}`, margin, y); y += 5;
+            pdf.text(`Integral de Referencia: ${resultadoIntegral}`, margin, y); y += 10;
+            
+            // ----------------------------------------------------
+            // 5. ADJUNTAR LA GRÁFICA (Canvas a Imagen)
+            // ----------------------------------------------------
+            
+            const imgData = chartCanvas.toDataURL('image/png');
+            const imgWidth = 180; // Ancho en mm (casi el ancho de la página A4)
+            const imgHeight = (chartCanvas.height * imgWidth) / chartCanvas.width;
+            
+            // Verificar si hay espacio y, si no, agregar una nueva página
+            if (y + imgHeight + margin > pdf.internal.pageSize.getHeight()) {
+                pdf.addPage();
+                y = margin;
+            }
+
+            pdf.text("— Visualización —", margin, y);
+            y += 5;
+            pdf.addImage(imgData, 'PNG', margin, y, imgWidth, imgHeight);
+            
+            // ----------------------------------------------------
+            // 6. FINALIZAR Y GUARDAR
+            // ----------------------------------------------------
+
+            pdf.save('ReporteEstructuradoRiemann_' + new Date().toISOString().slice(0, 10) + '.pdf');
+            
+            Swal.close();
+            Swal.fire({ icon: "success", title: "Descarga exitosa", text: "El reporte estructurado ha sido exportado como PDF." });
+        });
+    }
+
+    // =======================================================
+    // 8. EVENTO LIMPIAR HISTORIAL COMPLETO
+    // =======================================================
+
+    if (clearHistoryBtn) {
+        clearHistoryBtn.addEventListener('click', () => {
+            const user = firebase.auth().currentUser;
+            if (!user) {
+                Swal.fire({ icon: "warning", title: "Sesión expirada", text: "Inicia sesión para limpiar tu historial." });
+                return;
+            }
+
+            const userId = user.uid;
+
+            Swal.fire({
+                title: "¿Estás seguro?", text: "¡Esto borrará permanentemente todo tu historial!",
+                icon: "warning", showCancelButton: true, confirmButtonText: "Sí, borrar todo", cancelButtonText: "Cancelar"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    
+                    db.collection("users").doc(userId).collection("calculations").get()
+                    .then(snapshot => {
+                        const batch = db.batch();
+                        snapshot.docs.forEach(doc => { batch.delete(doc.ref); });
+                        return batch.commit();
+                    })
+                    .then(() => {
+                        Swal.fire({ icon: "success", title: "Historial Limpio", text: "Todo el historial ha sido borrado." });
+                        loadAndRenderHistory(userId);
+                    })
+                    .catch(error => {
+                        console.error("Error al limpiar historial:", error);
+                        Swal.fire({ icon: "error", title: "Error", text: "Fallo al borrar el historial." });
+                    });
+                }
+            });
+        });
+    }
+
+
+    // =======================================================
+    // 9. INICIALIZACIÓN
     // =======================================================
 
     // Mantener sesión
     firebase.auth().onAuthStateChanged(user => {
         if (user) {
+            // Usuario logueado
             showApp();
-            resetCalculationForm(); // Limpiamos campos
+            resetCalculationForm();
             loadAndRenderHistory(user.uid); 
+            updateUserNameLabel(user.uid); 
+            
+            if (historyCard) historyCard.classList.remove('hidden');
+            if (clearHistoryBtn) clearHistoryBtn.style.display = '';
         }
-        else showLogin();
+        else {
+            // Usuario invitado o sin sesión
+            showLogin();
+            
+            if (historyCard) historyCard.classList.add('hidden');
+            if (clearHistoryBtn) clearHistoryBtn.style.display = 'none';
+            if (userNameLabel) userNameLabel.textContent = ""; 
+        }
     });
 
 });

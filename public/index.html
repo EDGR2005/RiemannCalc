@@ -34,7 +34,11 @@
         <p class="muted small">
           ¿No tienes cuenta?
           <a href="#" id="register-link">Registrarse</a>
-        </p>
+
+          <button id="guest-login-btn" class="secondary small" style="margin-top: 15px;">
+              Entrar como Invitado (Solo cálculo)
+          </button>
+                  </p>
       </form>
     </div>
   </div>
@@ -74,8 +78,9 @@
         <img src="logo.jpeg" alt="logo" class="logo">
         <div>
           <h1>Sumatoria de Riemann — Interfaz</h1>
-          <div class="muted">Introduce función, número de rectángulos y obtén el área aproximada + gráfico.</div>
+          <!--<div class="muted">Introduce función, número de rectángulos y obtén el área aproximada + gráfico.</div>-->
         </div>
+        <span id="user-name-label" class="muted small" style="margin-right: 20px; font-size: 20px;">Nombre</span>
         <button id="logout-btn" class="secondary">Cerrar sesión</button>
       </header>
 
@@ -84,7 +89,7 @@
         <!-- IZQUIERDA -->
         <div>
 
-          <div class="card">
+          <div class="card" id="card-Suma">
             <h3>Parámetros de la suma</h3>
 
             <form id="calc-form">
@@ -95,18 +100,18 @@
               <div class="inline">
                 <div>
                   <label>Intervalo a</label>
-                  <input id="a-limit" type="number" step="any" value="0" />
+                  <input id="a-limit" type="number" step="any" value="" />
                 </div>
                 <div>
                   <label>Intervalo b</label>
-                  <input id="b-limit" type="number" step="any" value="3.14" />
+                  <input id="b-limit" type="number" step="any" value="" />
                 </div>
               </div>
 
               <div class="inline">
                 <div>
                   <label>N° de rectángulos</label>
-                  <input id="partitions" type="number" min="1" value="20" />
+                  <input id="partitions" type="number" min="1" value="" />
                 </div>
                 <div>
                   <label>Método</label>
@@ -131,7 +136,7 @@
           <!--DIV para historial-->
           <br>
           <div>
-            <div class="card">
+            <div class="card" id="historyCard">
               <h3>Historial de Cálculos</h3>
               <ul id="history-list" class="unstyled-list">
                   <!--<li class="muted small">Aún no hay cálculos guardados.</li>-->

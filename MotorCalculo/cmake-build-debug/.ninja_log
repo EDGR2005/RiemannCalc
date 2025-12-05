@@ -1,0 +1,11 @@
+# ninja log v6
+22	984	7683864197893223	CMakeFiles/Riemann_3_04.dir/toPostFix.cpp.obj	65405c6af0dd1d06
+29	981	7683864197964494	CMakeFiles/Riemann_3_04.dir/Utils.cpp.obj	153aad53912b724d
+17	923	7683864197842251	CMakeFiles/Riemann_3_04.dir/main.cpp.obj	d0c2d0d740f06270
+1153	1425	7605905702757254	Riemann_3_04.exe	2feb50aedb66beae
+6	1000	7683864197730247	CMakeFiles/Riemann_3_04.dir/cutIntegral.cpp.obj	d8c0caca78017334
+12	1041	7683864197791501	CMakeFiles/Riemann_3_04.dir/ExpressionParser.cpp.obj	f2c5734f1654ee4a
+4	331	7683870139790141	build.ninja	11a244070927a3dc
+8	189	7683870158245242	Riemann_3_04.exe	83ce1b2548eda626
+9	1519	7683871861987094	CMakeFiles/Riemann_3_04.dir/ExpressionParser.cpp.obj	f2c5734f1654ee4a
+1519	1715	7683871877083705	Riemann_3_04.exe	83ce1b2548eda626

@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sumatoria de Riemann - GUI</title>
+
+  <!-- Librerías CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjs@11.8.0/lib/browser/math.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+  <link rel="stylesheet" href="styleRiemann.css">
+</head>
+<body>
+
+  <!-- CONTENEDOR LOGIN -->
+  <div id="login-container">
+    <div class="card">
+      <h2>Iniciar sesión</h2>
+
+      <form id="login-form">
+        <label>Email</label>
+        <input id="login-email" type="email" placeholder="correo" />
+
+        <label>Contraseña</label>
+        <input id="login-password" type="password" placeholder="contraseña" />
+
+        <button type="submit">Entrar</button>
+
+        <p class="muted small">
+          ¿No tienes cuenta?
+          <a href="#" id="register-link">Registrarse</a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- CONTENEDOR REGISTER-->
+  <div id="signup-container">
+    <div class="card">
+      <h2>Registrarse</h2>
+
+      <form id="signup-form">
+        <label>Email</label>
+        <input id="signup-email" type="email" placeholder="correo" />
+
+        <label>Contraseña</label>
+        <input id="signup-password" type="password" placeholder="contraseña" />
+        <br>
+        <label>Nombre</label>
+        <input id="signup-name" type="text" placeholder="Ingresa tu nombre" />
+
+        
+
+        <button type="submit">Registrarse</button>
+
+        <p class="muted small">
+          ¿Ya tienes cuenta?
+          <a href="#" id="login-link">Iniciar sesión</a>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <!-- APP PRINCIPAL -->
+  <div id="main-app" class="hidden">
+
+    <div class="container">
+      <header>
+        <img src="logo.jpeg" alt="logo" class="logo">
+        <div>
+          <h1>Sumatoria de Riemann — Interfaz</h1>
+          <div class="muted">Introduce función, número de rectángulos y obtén el área aproximada + gráfico.</div>
+        </div>
+        <button id="logout-btn" class="secondary">Cerrar sesión</button>
+      </header>
+
+      <div class="grid">
+
+        <!-- IZQUIERDA -->
+        <div>
+
+          <div class="card">
+            <h3>Parámetros de la suma</h3>
+
+            <form id="calc-form">
+
+              <label>Función f(x)</label>
+              <input id="function" type="text" value="" />
+
+              <div class="inline">
+                <div>
+                  <label>Intervalo a</label>
+                  <input id="a-limit" type="number" step="any" value="0" />
+                </div>
+                <div>
+                  <label>Intervalo b</label>
+                  <input id="b-limit" type="number" step="any" value="3.14" />
+                </div>
+              </div>
+
+              <div class="inline">
+                <div>
+                  <label>N° de rectángulos</label>
+                  <input id="partitions" type="number" min="1" value="20" />
+                </div>
+                <div>
+                  <label>Método</label>
+                  <select id="sum-type">
+                    <option value="left">Izquierda</option>
+                    <option value="right">Derecha</option>
+                    <option value="midpoint">Punto medio</option>
+                  </select>
+                </div>
+              </div>
+
+              <button type="submit">Calcular</button>
+
+              <p class="muted small">
+                Resultado aproximado: <strong id="riemann-result">—</strong><br>
+                Δx: <strong id="delta-x">—</strong><br>
+                Integral real: <strong id="integral-result">—</strong>
+              </p>
+            </form>
+          </div>
+
+          <!--DIV para historial-->
+          <br>
+          <div>
+            <div class="card">
+              <h3>Historial de Cálculos</h3>
+              <ul id="history-list" class="unstyled-list">
+                  <!--<li class="muted small">Aún no hay cálculos guardados.</li>-->
+                  <li class="history-item" data-index="0">
+                    <div>
+                        <strong>f(x): x^2</strong> | [0, 2] n=10
+                        <div class="small">Resultado: 2.66667</div>
+                    </div>
+                    <div class="actions">
+                        <button class="load-btn primary small">Cargar</button>
+                        <button class="delete-btn secondary small">X</button>
+                    </div>
+                </li>
+              </ul>
+              <button id="clear-history-btn" class="secondary small">Limpiar Historial</button>
+            </div>          
+          </div>
+
+        </div>
+
+        
+
+        <!-- DERECHA -->
+        <div>
+          <div class="card" id="chartCard">
+            <div class="main-top">
+              <div>
+                <strong>Gráfico</strong>
+                <div class="muted small">Visualiza el área bajo la curva.</div>
+              </div>
+              <div class="row">
+                <button id="exportImageBtn">Exportar imagen</button>
+                <button id="exportPdfBtn" class="secondary">PDF</button>
+              </div>
+            </div>
+
+            <div id="canvasWrap">
+              <canvas id="riemannChart" height="360"></canvas>
+            </div>
+
+            <!-- <h4>Resumen</h4>
+            <div id="summaryBox" class="muted small"></div> -->
+          </div>
+
+          <footer class="card">
+            Consejo: exporta a PDF para guardar tu reporte completo.
+          </footer>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIREBASE V8 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+  <!-- TU SCRIPT -->
+  
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>

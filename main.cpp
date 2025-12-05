@@ -15,7 +15,7 @@
 
 #include <fstream>  // para manejo de archivos (ifstream, ofstream)
 #include <string>   // para usar std::string
-#include <nlohmann/json.hpp>
+#include "nlohmann/json.hpp"
 
 using json = nlohmann::json;
 using namespace std;

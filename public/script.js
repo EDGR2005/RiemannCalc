@@ -1,19 +1,3 @@
-// =======================================================
-// 1. CONFIGURACIÓN DE FIREBASE
-// =======================================================
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBqt_s517Lhr47XUJVBogfwIWtZ2Hyq5-0",
-  authDomain: "riemanncalc.firebaseapp.com",
-  projectId: "riemanncalc",
-  storageBucket: "riemanncalc.firebasestorage.app",
-  messagingSenderId: "783698654778",
-  appId: "1:783698654778:web:d54a2f213755feeec3a703",
-  measurementId: "G-F7PZDX69GC"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore(); 
 
 // Variable global para mantener la instancia del gráfico
 let riemannChartInstance = null;
